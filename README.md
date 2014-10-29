@@ -1,4 +1,4 @@
-# as3-iron_mq
+# IronMQ ActionScript Client Library (write-only)
 
 This library makes it easy to post messages to the IronMQ queue backend. 
 
