@@ -9,6 +9,7 @@ package panhelios.api.ironio
 {	
 	import flash.events.Event;
 	import flash.events.HTTPStatusEvent;
+	import flash.events.IOErrorEvent;
 	import flash.events.SecurityErrorEvent;
 	import flash.net.URLLoader;
 	import flash.net.URLLoaderDataFormat;
@@ -41,6 +42,8 @@ package panhelios.api.ironio
 			_urlLoader.addEventListener(HTTPStatusEvent.HTTP_STATUS, onStatus);
 			_urlLoader.addEventListener(Event.OPEN, onOpen);
 			_urlLoader.addEventListener(Event.COMPLETE, onComplete);
+			
+			_urlLoader.addEventListener(IOErrorEvent.IO_ERROR, function ():void {}); // fail silently
 		}
 		
 		protected function buildUrl(queueName:String):String
@@ -63,11 +66,13 @@ package panhelios.api.ironio
 		 * });
 		 * </code>
 		 *
-		 * @param String queueName	Name of the queue.
+		 * @param String queueName	Name of the queue
 		 * @param String message	Body of the message
 		 * @param Object properties	Object of properties, see class Message for description
+		 * 
+		 * @return Boolean	Returns true on success, false on failure
 		 */
-		public function postMessage(queueName:String, message:String, properties:Object = null):void
+		public function postMessage(queueName:String, message:String, properties:Object = null):Boolean
 		{
 			var msg:Message = new Message(message, properties);
 			var request:URLRequest = new URLRequest();
@@ -91,8 +96,12 @@ package panhelios.api.ironio
 			/* send request to API */
 			try {
 				_urlLoader.load(request);
+				
+				return true;
 			} catch (e:Error) {
 				trace(e);
+				
+				return false;
 			}
 		}
 		
